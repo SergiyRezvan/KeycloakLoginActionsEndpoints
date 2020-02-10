@@ -1,0 +1,43 @@
+version: '3.3'
+
+networks:
+  keycloak-net:
+
+volumes:
+  keycloak-datastore:
+
+services:
+  keycloak-db:
+    image: postgres:10.10
+    volumes:
+      - keycloak-datastore:/var/lib/postresql/data
+    networks:
+      - keycloak-net
+    ports:
+      - "25432:5432"
+    environment:
+      POSTGRES_DB:       keycloak
+      POSTGRES_USER:     keycloak
+      POSTGRES_PASSWORD: password
+
+  keycloak:
+    build: .
+    depends_on:
+      - keycloak-db
+    networks:
+      - keycloak-net
+    ports:
+      - "8180:8080"
+      - "8686:8686"
+    environment:
+      DB_VENDOR:   POSTGRES
+      DB_ADDR:     keycloak-db
+      DB_PORT:     5432
+      DB_DATABASE: keycloak
+      DB_USER:     keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_USER:     admin
+      KEYCLOAK_PASSWORD: admin
+      ROOT_LOGLEVEL: DEBUG
+      JAVA_OPTS: -Djava.net.preferIPv4Stack=true -agentlib:jdwp=transport=dt_socket,address=8686,server=y,suspend=n
+    command: ["-b", "0.0.0.0"]
