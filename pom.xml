@@ -10,7 +10,7 @@
     <version>1.0</version>
 
     <properties>
-        <keyclock.version>13.0.0</keyclock.version>
+        <keyclock.version>15.1.1</keyclock.version>
     </properties>
 
     <dependencies>
